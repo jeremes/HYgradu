@@ -1,0 +1,156 @@
+\RequirePackage[l2tabu, orthodox]{nag}
+
+\documentclass[a4paper,twoside,openright,12pt]{report}
+
+\usepackage[english]{babel}
+\usepackage{ae,aecompl}
+\usepackage[utf8]{inputenc}
+%\usepackage{graphicx}
+\usepackage[T1]{fontenc}
+\usepackage[pdftex]{color, graphicx}
+\usepackage{lmodern}
+\usepackage[footnotesize, bf]{caption}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{braket}
+\usepackage{fancyhdr} 
+\usepackage{feynmf}
+%\usepackage{feynmp}
+\usepackage[pass]{geometry}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{float}
+\usepackage{slashed}
+\usepackage{textcomp}
+\usepackage[colorlinks=false, pdfborder={0 0 0}]{hyperref}
+%\usepackage{mathsfs}
+\usepackage{microtype}
+\usepackage{emptypage}
+\usepackage[toc,page]{appendix}
+\usepackage{amstext}
+\usepackage{array}
+\usepackage[super]{nth}
+\usepackage[style=numeric-comp,sorting=none,backend=bibtex,doi=false,firstinits=true,hyperref]{biblatex} %biblatex jargon, google meanings
+\usepackage{xpatch}
+\usepackage{caption}
+\usepackage{subcaption}
+
+%supress "in" from biblatex
+\renewbibmacro{in:}{}
+%":" instead of "." after author in biblatex
+\renewcommand{\labelnamepunct}{\addcolon\space}
+% Collaborations correctly with tag "authortype"
+\renewbibmacro*{author}{%
+  \ifboolexpr{ test {\ifuseauthor} and not test {\ifnameundef{author}} }
+    {\printnames{author}%
+     \iffieldundef{authortype}
+       {}
+       {\setunit{\addspace}%
+        \usebibmacro{authorstrg}}}
+    {}}
+
+\DeclareFieldFormat{authortype}{\mkbibparens{#1}}
+% removes period at the very end of bibliographic record
+\renewcommand{\finentrypunct}{}
+% "p.101"->"101"
+\DeclareFieldFormat{pages}{#1} 
+% volume to bold
+\DeclareFieldFormat*{volume}{\mkbibbold{#1}}
+
+% (year), pages -> pages (year),
+\renewbibmacro{date+pages}{%
+   \printfield{pages}%
+   \setunit*{\space}%
+   \usebibmacro{date}%
+   \setunit*{\addcomma\space}%
+   \newunit}
+
+\xpatchbibdriver{article}
+  {\newunit
+   \usebibmacro{note+pages}}
+  {}{}{}
+
+\newbibmacro*{journal+issuetitle}{%
+  \usebibmacro{journal}%
+  \setunit*{\addspace}%
+  \iffieldundef{series}
+    {}
+    {\newunit
+     \printfield{series}%
+     \setunit{\addspace}}%
+  \usebibmacro{volume+number+eid}%
+  \newunit
+  \usebibmacro{note+pages}%
+  \setunit{\addspace}%
+  \usebibmacro{issue+date}%
+  \setunit{\addcolon\space}%
+  \usebibmacro{issue}%
+  \newunit}
+  
+\setcounter{page}{1}
+\def\division{\char'057}
+\setlength{\unitlength}{.95pt}
+\setlength{\oddsidemargin}{1.95cm} %kaksipuoliset marginaalit
+\setlength{\evensidemargin}{0.45cm} %kaksipuoliset marginaalit
+\linespread{1.3}
+
+\let\oldenumerate\enumerate %numeroitujen listojen arvojen säätöä
+\renewcommand{\enumerate}{
+  \oldenumerate
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}
+
+\makeatletter %new environment for acknowledgements
+\newcommand\ackname{Acknowledgements}
+\if@titlepage
+  \newenvironment{acknowledgements}{%
+      \titlepage
+      \null\vfil
+      \@beginparpenalty\@lowpenalty
+      \begin{center}%
+        \bfseries \ackname
+        \@endparpenalty\@M
+      \end{center}}%
+     {\par\vfil\null\endtitlepage}
+\else
+  \newenvironment{acknowledgements}{%
+      \if@twocolumn
+        \section*{\abstractname}%
+      \else
+        \small
+        \begin{center}%
+          {\bfseries \ackname\vspace{-.5em}\vspace{\z@}}%
+        \end{center}%
+        \quotation
+      \fi}
+      {\if@twocolumn\else\endquotation\fi}
+\fi
+\makeatother
+
+\bibliography{graduLahteet.bib} %bib source
+
+\begin{document}
+
+\pagenumbering{gobble}
+\tableofcontents
+%\addtocontents{toc}{~\hfill\textbf{Page}\par}
+
+\begin{acknowledgements}
+\noindent
+TEXT
+\end{acknowledgements}
+
+\cleardoublepage
+
+\pagestyle{plain}
+\newpage
+\setcounter{page}{1}
+\pagenumbering{arabic}
+
+\chapter{First chapter}
+Text
+
+\end{document}
